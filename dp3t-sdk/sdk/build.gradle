@@ -136,8 +136,11 @@ dependencies {
 	}
 	implementation 'org.bouncycastle:bcprov-jdk15on:1.65'
 
-	implementation 'com.google.android.gms:play-services-tasks:17.0.2'
-	implementation 'com.google.android.gms:play-services-base:17.2.1'
+	def safeParcelVersion = "1.6.0"
+	implementation "org.microg:safe-parcel:$safeParcelVersion"
+
+	def fragmentVersion = "1.2.5"
+	implementation "androidx.fragment:fragment:$fragmentVersion"
 
 	testImplementation 'junit:junit:4.12'
 

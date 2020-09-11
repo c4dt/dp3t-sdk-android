@@ -72,7 +72,9 @@ dependencies {
 
 	implementation project(':dp3t-sdk')
 
-	implementation 'com.google.android.gms:play-services-tasks:17.0.2'
+	def safeParcelVersion = "1.6.0"
+	implementation "org.microg:safe-parcel:$safeParcelVersion"
+
 	implementation 'androidx.appcompat:appcompat:1.1.0'
 	implementation 'androidx.core:core:1.2.0'
 	implementation 'androidx.fragment:fragment:1.2.4'
