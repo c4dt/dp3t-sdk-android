@@ -101,10 +101,10 @@ public class TestGoogleExposureClient implements ExposureNotificationClient {
 		return new DummyTask<>(null);
 	}
 
-	@Override
-	public Task<List<ExposureWindow>> getExposureWindows(String s) {
-		return new DummyTask<>(new ArrayList<>());
-	}
+//	@Override
+//	public Task<List<ExposureWindow>> getExposureWindows(String s) {
+//		return new DummyTask<>(new ArrayList<>());
+//	}
 
 	@Override
 	public Task<ExposureSummary> getExposureSummary(String s) {
