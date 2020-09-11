@@ -17,7 +17,7 @@ import androidx.core.util.Consumer;
 import java.io.File;
 import java.util.List;
 
-//import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.exposurenotification.*;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -62,18 +62,18 @@ public class GoogleExposureClient {
 					successCallback.run();
 				})
 				.addOnFailureListener(e -> {
-//					if (e instanceof ApiException) {
-//						ApiException apiException = (ApiException) e;
-//						if (apiException.getStatusCode() == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-//							try {
-//								Logger.i(TAG, "start: resolution required");
-//								apiException.getStatus().startResolutionForResult(activity, resolutionRequestCode);
-//								return;
-//							} catch (IntentSender.SendIntentException e2) {
-//								Logger.e(TAG, "start: error calling startResolutionForResult()");
-//							}
-//						}
-//					}
+					if (e instanceof ApiException) {
+						ApiException apiException = (ApiException) e;
+						if (apiException.getStatusCode() == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
+							try {
+								Logger.i(TAG, "start: resolution required");
+								apiException.getStatus().startResolutionForResult(activity, resolutionRequestCode);
+								return;
+							} catch (IntentSender.SendIntentException e2) {
+								Logger.e(TAG, "start: error calling startResolutionForResult()");
+							}
+						}
+					}
 					Logger.e(TAG, "start", e);
 					errorCallback.accept(e);
 				});
@@ -97,18 +97,18 @@ public class GoogleExposureClient {
 					successCallback.onSuccess(temporaryExposureKeys);
 				})
 				.addOnFailureListener(e -> {
-//					if (e instanceof ApiException) {
-//						ApiException apiException = (ApiException) e;
-//						if (apiException.getStatusCode() == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
-//							try {
-//								Logger.i(TAG, "getTemporaryExposureKeyHistory: resolution required");
-//								apiException.getStatus().startResolutionForResult(activity, resolutionRequestCode);
-//								return;
-//							} catch (IntentSender.SendIntentException e2) {
-//								Logger.e(TAG, "getTemporaryExposureKeyHistory: error calling startResolutionForResult()");
-//							}
-//						}
-//					}
+					if (e instanceof ApiException) {
+						ApiException apiException = (ApiException) e;
+						if (apiException.getStatusCode() == ExposureNotificationStatusCodes.RESOLUTION_REQUIRED) {
+							try {
+								Logger.i(TAG, "getTemporaryExposureKeyHistory: resolution required");
+								apiException.getStatus().startResolutionForResult(activity, resolutionRequestCode);
+								return;
+							} catch (IntentSender.SendIntentException e2) {
+								Logger.e(TAG, "getTemporaryExposureKeyHistory: error calling startResolutionForResult()");
+							}
+						}
+					}
 					Logger.e(TAG, "getTemporaryExposureKeyHistory", e);
 					errorCallback.accept(e);
 				});
