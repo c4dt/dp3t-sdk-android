@@ -12,7 +12,7 @@ package org.dpppt.android.sdk.internal.nearby;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 
 public class ApiExceptionUtil {
@@ -22,17 +22,17 @@ public class ApiExceptionUtil {
 
 	public static final int UNKNOWN_STATUS_CODE = -2;
 
-//	public static int getENApiStatusCode(ApiException apiException) {
-//		Status status = apiException.getStatus();
-//		String statusMessage = status.getStatusMessage();
-//		if (statusMessage != null) {
-//			Matcher matcher = CONNECTION_RESULT_PATTERN.matcher(statusMessage);
-//			if (matcher.find()) {
-//				String connectionStatusCode = matcher.group(1);
-//				return Integer.parseInt(connectionStatusCode);
-//			}
-//		}
-//		return UNKNOWN_STATUS_CODE;
-//	}
+	public static int getENApiStatusCode(ApiException apiException) {
+		Status status = apiException.getStatus();
+		String statusMessage = status.getStatusMessage();
+		if (statusMessage != null) {
+			Matcher matcher = CONNECTION_RESULT_PATTERN.matcher(statusMessage);
+			if (matcher.find()) {
+				String connectionStatusCode = matcher.group(1);
+				return Integer.parseInt(connectionStatusCode);
+			}
+		}
+		return UNKNOWN_STATUS_CODE;
+	}
 
 }

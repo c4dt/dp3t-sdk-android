@@ -24,7 +24,7 @@ import java.util.Set;
 
 import javax.net.ssl.SSLException;
 
-//import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes;
 
 import org.dpppt.android.sdk.GaenAvailability;
@@ -94,8 +94,8 @@ public class ErrorHelper {
 			Exception exception = GaenStateCache.getApiException();
 			if (exception == null) {
 				errorState.setErrorCode("GAUD-00");
-//			} else if (exception instanceof ApiException) {
-//				errorState.setErrorCode("GAUD-" + ((ApiException) exception).getStatusCode());
+			} else if (exception instanceof ApiException) {
+				errorState.setErrorCode("GAUD-" + ((ApiException) exception).getStatusCode());
 			} else {
 				errorState.setErrorCode("GAUD-" + exception.getMessage());
 			}
@@ -126,16 +126,16 @@ public class ErrorHelper {
 		} else if (e instanceof StatusCodeException) {
 			syncError = ErrorState.SYNC_ERROR_SERVER;
 			if (setErrorCode) syncError.setErrorCode("ASST" + ((StatusCodeException) e).getCode());
-//		} else if (e instanceof ApiException) {
-//			ApiException apiException = (ApiException) e;
-//			int enApiStatusCode = ApiExceptionUtil.getENApiStatusCode(apiException);
-//			if (enApiStatusCode == ExposureNotificationStatusCodes.FAILED_DISK_IO) {
-//				syncError = ErrorState.SYNC_ERROR_NO_SPACE;
-//				if (setErrorCode) syncError.setErrorCode("AGNOSP");
-//			} else {
-//				syncError = ErrorState.SYNC_ERROR_API_EXCEPTION;
-//				if (setErrorCode) syncError.setErrorCode("AGAEN" + apiException.getStatusCode() + "." + enApiStatusCode);
-//			}
+		} else if (e instanceof ApiException) {
+			ApiException apiException = (ApiException) e;
+			int enApiStatusCode = ApiExceptionUtil.getENApiStatusCode(apiException);
+			if (enApiStatusCode == ExposureNotificationStatusCodes.FAILED_DISK_IO) {
+				syncError = ErrorState.SYNC_ERROR_NO_SPACE;
+				if (setErrorCode) syncError.setErrorCode("AGNOSP");
+			} else {
+				syncError = ErrorState.SYNC_ERROR_API_EXCEPTION;
+				if (setErrorCode) syncError.setErrorCode("AGAEN" + apiException.getStatusCode() + "." + enApiStatusCode);
+			}
 		} else if (e instanceof SSLException) {
 			syncError = ErrorState.SYNC_ERROR_SSLTLS;
 		} else {
