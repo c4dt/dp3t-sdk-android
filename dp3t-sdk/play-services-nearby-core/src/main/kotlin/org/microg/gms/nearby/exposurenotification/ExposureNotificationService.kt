@@ -22,7 +22,7 @@ class ExposureNotificationService : BaseService(TAG, GmsService.NEARBY_EXPOSURE)
         PackageUtils.getAndCheckCallingPackage(this, request.packageName)
 
         fun checkPermission(permission: String): String? {
-            if (checkCallingPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            if (checkCallingOrSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
                 callback.onPostInitComplete(FAILED_UNAUTHORIZED, null, null)
                 return null
             }
