@@ -128,7 +128,7 @@ dependencies {
 	runtimeOnly('io.jsonwebtoken:jjwt-orgjson:0.11.1') {
 		exclude group: 'org.json', module: 'json'
 	}
-	implementation 'org.bouncycastle:bcprov-jdk15on:1.65'
+//	implementation 'org.bouncycastle:bcprov-jdk15on:1.65'
 
 	def safeParcelVersion = "1.6.0"
 	implementation "org.microg:safe-parcel:$safeParcelVersion"

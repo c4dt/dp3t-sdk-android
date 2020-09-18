@@ -48,7 +48,7 @@ public class ExposureNotificationClientImpl extends GoogleApi<Api.ApiOptions.NoO
         super(context, API);
     }
 
-    private static final String TAG = "ExposureNotificationClientImpl";
+    private static final String TAG = "ENClientImpl";
 
     @Override
     public Task<Void> start() {
