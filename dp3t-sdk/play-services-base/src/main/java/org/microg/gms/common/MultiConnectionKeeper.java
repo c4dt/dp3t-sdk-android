@@ -122,7 +122,7 @@ public class MultiConnectionKeeper {
         @SuppressLint("InlinedApi")
         public void bind() {
             Log.d(TAG, "Connection(" + actionString + ") : bind()");
-            Intent intent = new Intent(actionString).setPackage(GMS_PACKAGE_NAME);
+            Intent intent = new Intent(actionString).setPackage(context.getPackageName());
             int flags = Context.BIND_AUTO_CREATE;
             if (SDK_INT >= ICE_CREAM_SANDWICH) {
                 flags |= Context.BIND_ADJUST_WITH_ACTIVITY;
