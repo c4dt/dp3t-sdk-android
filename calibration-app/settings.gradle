@@ -10,3 +10,21 @@
 
 include ':app', ':dp3t-sdk'
 project(':dp3t-sdk').projectDir = new File('../dp3t-sdk/sdk')
+include ':play-services-tasks'
+project(':play-services-tasks').projectDir = new File('../dp3t-sdk/play-services-tasks')
+include ':play-services-base'
+project(':play-services-base').projectDir = new File('../dp3t-sdk/play-services-base')
+include ':play-services-nearby'
+project(':play-services-nearby').projectDir = new File('../dp3t-sdk/play-services-nearby')
+include ':play-services-base-api'
+project(':play-services-base-api').projectDir = new File('../dp3t-sdk/play-services-base-api')
+include ':play-services-basement'
+project(':play-services-basement').projectDir = new File('../dp3t-sdk/play-services-basement')
+include ':play-services-nearby-core-proto'
+project(':play-services-nearby-core-proto').projectDir = new File('../dp3t-sdk/play-services-nearby-core-proto')
+include ':play-services-nearby-core'
+project(':play-services-nearby-core').projectDir = new File('../dp3t-sdk/play-services-nearby-core')
+include ':play-services-base-core'
+project(':play-services-base-core').projectDir = new File('../dp3t-sdk/play-services-base-core')
+include ':play-services-nearby-api'
+project(':play-services-nearby-api').projectDir = new File('../dp3t-sdk/play-services-nearby-api')
