@@ -72,6 +72,7 @@ class ScannerService : Service() {
     }
 
     fun onScanResult(result: ScanResult) {
+        Log.d(TAG, "onScanResult: $result")
         val data = result.scanRecord?.serviceData?.get(SERVICE_UUID) ?: return
         if (data.size < 16) return // Ignore invalid advertisements
         database.noteAdvertisement(data.sliceArray(0..15), data.drop(16).toByteArray(), result.rssi)
