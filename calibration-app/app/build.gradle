@@ -71,6 +71,15 @@ dependencies {
 	implementation fileTree(dir: '../../dp3t-sdk/sdk/libs', include: ['*.aar'])
 
 	implementation project(':dp3t-sdk')
+	implementation project(':play-services-base')
+	implementation project(':play-services-base-api')
+	implementation project(':play-services-base-core')
+	implementation project(':play-services-basement')
+	implementation project(':play-services-nearby-api')
+	implementation project(':play-services-nearby-core')
+	implementation project(':play-services-nearby-core-proto')
+	implementation project(':play-services-tasks')
+	implementation project(':play-services-nearby')
 
 	def safeParcelVersion = "1.6.0"
 	implementation "org.microg:safe-parcel:$safeParcelVersion"
