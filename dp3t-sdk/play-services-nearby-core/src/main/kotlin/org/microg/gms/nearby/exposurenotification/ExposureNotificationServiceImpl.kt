@@ -108,6 +108,8 @@ class ExposureNotificationServiceImpl(private val context: Context, private val 
             else -> emptyList()
         }
 
+        Log.d(TAG, "status = ${status.statusMessage} (${status.statusCode}) ; response = $response")
+
         ExposureDatabase.with(context) { database ->
             database.noteAppAction(packageName, "getTemporaryExposureKeyHistory", JSONObject().apply {
                 put("result", status.statusCode)

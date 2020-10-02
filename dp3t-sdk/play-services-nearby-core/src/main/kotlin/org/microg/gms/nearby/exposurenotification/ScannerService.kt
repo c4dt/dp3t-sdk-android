@@ -75,6 +75,10 @@ class ScannerService : Service() {
         Log.d(TAG, "onScanResult: $result")
         val data = result.scanRecord?.serviceData?.get(SERVICE_UUID) ?: return
         if (data.size < 16) return // Ignore invalid advertisements
+        val uuid = UUID(
+                data.slice(0..7).fold(0L, {acc, v -> acc * 256 + (v + 256) % 256}),
+                data.slice(8..15).fold(0L, {acc, v -> acc * 256 + (v + 256) % 256}))
+        Log.d(TAG, "recording advertisement: $uuid -- ${data.drop(16).joinToString(separator=" ", transform={"%02x".format(it)})}")
         database.noteAdvertisement(data.sliceArray(0..15), data.drop(16).toByteArray(), result.rssi)
         seenAdvertisements++
         lastAdvertisement = System.currentTimeMillis()
@@ -89,12 +93,14 @@ class ScannerService : Service() {
     }
 
     override fun onCreate() {
+        Log.d(TAG, "ScannerService.onCreate()")
         super.onCreate()
         database = ExposureDatabase.ref(this)
         registerReceiver(trigger, IntentFilter().also { it.addAction("android.bluetooth.adapter.action.STATE_CHANGED") })
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "ScannerService.onDestroy()")
         super.onDestroy()
         unregisterReceiver(trigger)
         stopScan()

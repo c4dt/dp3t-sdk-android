@@ -182,6 +182,7 @@ class ExposureDatabase private constructor(private val context: Context) : SQLit
     }
 
     fun batchStoreDiagnosisKey(packageName: String, token: String, keys: List<TemporaryExposureKey>, database: SQLiteDatabase = writableDatabase) = database.run {
+        Log.d(TAG, "store keys: $keys")
         beginTransaction()
         try {
             keys.forEach { storeDiagnosisKey(packageName, token, it, database) }
@@ -203,6 +204,7 @@ class ExposureDatabase private constructor(private val context: Context) : SQLit
     }
 
     fun batchUpdateDiagnosisKey(packageName: String, token: String, keys: List<TemporaryExposureKey>, database: SQLiteDatabase = writableDatabase) = database.run {
+        Log.d(TAG, "update keys: $keys")
         beginTransaction()
         try {
             keys.forEach { updateDiagnosisKey(packageName, token, it, database) }
@@ -294,7 +296,9 @@ class ExposureDatabase private constructor(private val context: Context) : SQLit
     }
 
     fun findAllMeasuredExposures(packageName: String, token: String, database: SQLiteDatabase = readableDatabase): List<MeasuredExposure> {
-        return listMatchedDiagnosisKeys(packageName, token, database).flatMap { findMeasuredExposures(it, database) }
+        val matches = listMatchedDiagnosisKeys(packageName, token, database).flatMap { findMeasuredExposures(it, database) }
+        Log.d(TAG, "matches = $matches")
+        return matches
     }
 
     private fun findMeasuredExposures(key: TemporaryExposureKey, database: SQLiteDatabase = readableDatabase): List<MeasuredExposure> {
@@ -531,6 +535,7 @@ class ExposureDatabase private constructor(private val context: Context) : SQLit
     fun generateCurrentPayload(metadata: ByteArray) = ensureTemporaryExposureKey().generatePayload(currentIntervalNumber.toInt(), metadata)
 
     override fun getWritableDatabase(): SQLiteDatabase {
+        Log.d(TAG, "getWritableDatabase(): this = $this, instance = $instance")
         if (this != instance) {
             throw IllegalStateException("Tried to open writable database from secondary instance")
         }
@@ -573,6 +578,7 @@ class ExposureDatabase private constructor(private val context: Context) : SQLit
         fun ref(context: Context): ExposureDatabase = synchronized(this) {
             if (instance == null) {
                 instance = ExposureDatabase(context.applicationContext)
+                Log.d(TAG, "New database instance created with context $context: $instance")
             }
             instance!!.ref()
         }
