@@ -29,7 +29,6 @@ class ScannerService : Service() {
     private var lastStartTime = 0L
     private var seenAdvertisements = 0L
     private var lastAdvertisement = 0L
-    private lateinit var database: ExposureDatabase
     private val callback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             result?.let { onScanResult(it) }
@@ -79,7 +78,9 @@ class ScannerService : Service() {
                 data.slice(0..7).fold(0L, {acc, v -> acc * 256 + (v + 256) % 256}),
                 data.slice(8..15).fold(0L, {acc, v -> acc * 256 + (v + 256) % 256}))
         Log.d(TAG, "recording advertisement: $uuid -- ${data.drop(16).joinToString(separator=" ", transform={"%02x".format(it)})}")
-        database.noteAdvertisement(data.sliceArray(0..15), data.drop(16).toByteArray(), result.rssi)
+        ExposureDatabase.with(this) { database ->
+            database.noteAdvertisement(data.sliceArray(0..15), data.drop(16).toByteArray(), result.rssi)
+        }
         seenAdvertisements++
         lastAdvertisement = System.currentTimeMillis()
     }
@@ -95,7 +96,6 @@ class ScannerService : Service() {
     override fun onCreate() {
         Log.d(TAG, "ScannerService.onCreate()")
         super.onCreate()
-        database = ExposureDatabase.ref(this)
         registerReceiver(trigger, IntentFilter().also { it.addAction("android.bluetooth.adapter.action.STATE_CHANGED") })
     }
 
@@ -104,7 +104,6 @@ class ScannerService : Service() {
         super.onDestroy()
         unregisterReceiver(trigger)
         stopScan()
-        database.unref()
     }
 
     override fun onBind(intent: Intent?): IBinder? {

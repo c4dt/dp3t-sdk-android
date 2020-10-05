@@ -37,7 +37,6 @@ class AdvertiserService : LifecycleService() {
     private var callback: AdvertiseCallback? = null
     private val advertiser: BluetoothLeAdvertiser?
         get() = BluetoothAdapter.getDefaultAdapter()?.bluetoothLeAdvertiser
-    private lateinit var database: ExposureDatabase
     private val trigger = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == "android.bluetooth.adapter.action.STATE_CHANGED") {
@@ -70,7 +69,6 @@ class AdvertiserService : LifecycleService() {
     override fun onCreate() {
         Log.d(TAG, "AdvertiserService.onCreate()")
         super.onCreate()
-        database = ExposureDatabase.ref(this)
         registerReceiver(trigger, IntentFilter().also { it.addAction("android.bluetooth.adapter.action.STATE_CHANGED") })
     }
 
@@ -90,7 +88,6 @@ class AdvertiserService : LifecycleService() {
         super.onDestroy()
         unregisterReceiver(trigger)
         stopAdvertising()
-        database.unref()
     }
 
     @Synchronized
@@ -116,7 +113,9 @@ class AdvertiserService : LifecycleService() {
                         )
                         else -> return@launchWhenStarted
                     }
-                    val payload = database.generateCurrentPayload(aem)
+                    val payload = ExposureDatabase.with(this@AdvertiserService) { database ->
+                        database.generateCurrentPayload(aem)
+                    }
                     val nextSend = (nextKeyMillis + Random.nextInt(-ADVERTISER_OFFSET, ADVERTISER_OFFSET)).coerceIn(0, 180000)
                     startAdvertising(payload, nextSend.toInt())
                     if (callback != null) delay(nextSend)
