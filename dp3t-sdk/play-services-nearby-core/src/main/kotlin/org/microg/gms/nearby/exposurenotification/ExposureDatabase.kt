@@ -278,7 +278,7 @@ class ExposureDatabase private constructor(private val context: Context) : SQLit
         val keys = listDiagnosisKeysPendingSearch(packageName, token, database)
         val oldestRpi = oldestRpi
         for (key in keys) {
-            if (oldestRpi == null || (key.rollingStartIntervalNumber + key.rollingPeriod) * ROLLING_WINDOW_LENGTH_MS + ALLOWED_KEY_OFFSET_MS < oldestRpi) {
+            if (oldestRpi == null || (key.rollingStartIntervalNumber + key.rollingPeriod).toLong() * ROLLING_WINDOW_LENGTH_MS + ALLOWED_KEY_OFFSET_MS < oldestRpi) {
                 // Early ignore because key is older than since we started scanning.
                 applyDiagnosisKeySearchResult(key, false, database)
             } else {
