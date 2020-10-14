@@ -145,7 +145,7 @@ class AdvertiserService : LifecycleService() {
         val data = AdvertiseData.Builder().addServiceUuid(SERVICE_UUID).addServiceData(SERVICE_UUID, bytes).build()
         val settings = Builder()
                 .setTimeout(nextSend)
-                .setAdvertiseMode(ADVERTISE_MODE_LOW_POWER)
+                .setAdvertiseMode(ADVERTISE_MODE_BALANCED)
                 .setTxPowerLevel(ADVERTISE_TX_POWER_MEDIUM)
                 .setConnectable(false)
                 .build()
