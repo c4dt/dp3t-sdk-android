@@ -29,7 +29,6 @@ class ScannerService : Service() {
     private var lastStartTime = 0L
     private var seenAdvertisements = 0L
     private var lastAdvertisement = 0L
-    private lateinit var database: ExposureDatabase
     private val callback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             result?.let { onScanResult(it) }
@@ -95,16 +94,16 @@ class ScannerService : Service() {
     }
 
     override fun onCreate() {
+        Log.d(TAG, "ScannerService.onCreate()")
         super.onCreate()
-        database = ExposureDatabase.ref(this)
         registerReceiver(trigger, IntentFilter().also { it.addAction("android.bluetooth.adapter.action.STATE_CHANGED") })
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "ScannerService.onDestroy()")
         super.onDestroy()
         unregisterReceiver(trigger)
         stopScan()
-        database.unref()
     }
 
     override fun onBind(intent: Intent?): IBinder? {

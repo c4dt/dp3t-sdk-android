@@ -10,12 +10,10 @@ import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.*
 import android.os.*
 import android.util.Log
-import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
-import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes
+import com.google.android.gms.nearby.exposurenotification.ExposureConfiguration
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationStatusCodes.*
 import com.google.android.gms.nearby.exposurenotification.ExposureSummary
 import com.google.android.gms.nearby.exposurenotification.TemporaryExposureKey
@@ -108,6 +106,8 @@ class ExposureNotificationServiceImpl(private val context: Context, private val 
             else -> emptyList()
         }
 
+        Log.d(TAG, "status = ${status.statusMessage} (${status.statusCode}) ; response = $response")
+
         ExposureDatabase.with(context) { database ->
             database.noteAppAction(packageName, "getTemporaryExposureKeyHistory", JSONObject().apply {
                 put("result", status.statusCode)
@@ -134,6 +134,20 @@ class ExposureNotificationServiceImpl(private val context: Context, private val 
         database.batchStoreDiagnosisKey(packageName, token, export.keys.map { it.toKey() })
         database.batchUpdateDiagnosisKey(packageName, token, export.revised_keys.map { it.toKey() })
         export.keys.size + export.revised_keys.size
+    }
+
+    private fun buildExposureSummary(configuration: ExposureConfiguration, exposures: List<MergedExposure>): ExposureSummary {
+        return ExposureSummary.ExposureSummaryBuilder()
+                .setDaysSinceLastExposure(exposures.map { it.daysSinceExposure }.min()?.toInt() ?: 0)
+                .setMatchedKeyCount(exposures.map { it.key }.distinct().size)
+                .setMaximumRiskScore(exposures.map { it.getRiskScore(configuration) }.max()?.toInt() ?: 0)
+                .setAttenuationDurations(intArrayOf(
+                        exposures.map { it.getAttenuationDurations(configuration)[0] }.sum(),
+                        exposures.map { it.getAttenuationDurations(configuration)[1] }.sum(),
+                        exposures.map { it.getAttenuationDurations(configuration)[2] }.sum()
+                ))
+                .setSummationRiskScore(exposures.map { it.getRiskScore(configuration) }.sum())
+                .build()
     }
 
     override fun provideDiagnosisKeys(params: ProvideDiagnosisKeysParams) {
@@ -199,10 +213,18 @@ class ExposureNotificationServiceImpl(private val context: Context, private val 
                     }
                 }
 
-                val match = database.findAllMeasuredExposures(packageName, params.token).isNotEmpty()
+                val exposures = database.findAllMeasuredExposures(packageName, params.token).merge()
+                val match = exposures.isNotEmpty()
 
                 try {
-                    val intent = Intent(if (match) ACTION_EXPOSURE_STATE_UPDATED else ACTION_EXPOSURE_NOT_FOUND)
+                    val intent = if (match) {
+                        val exposureSummary = database.loadConfiguration(packageName, params.token)
+                                ?.let { buildExposureSummary(it, exposures) }
+                                ?: ExposureSummary.ExposureSummaryBuilder().build()
+                        Intent(ACTION_EXPOSURE_STATE_UPDATED).putExtra(EXTRA_EXPOSURE_SUMMARY, exposureSummary)
+                    } else {
+                        Intent(ACTION_EXPOSURE_NOT_FOUND)
+                    }
                     intent.putExtra(EXTRA_TOKEN, params.token)
                     intent.`package` = packageName
                     Log.d(TAG, "Sending $intent")
@@ -225,17 +247,7 @@ class ExposureNotificationServiceImpl(private val context: Context, private val 
             return@with
         }
         val exposures = database.findAllMeasuredExposures(packageName, params.token).merge()
-        val response = ExposureSummary.ExposureSummaryBuilder()
-                .setDaysSinceLastExposure(exposures.map { it.daysSinceExposure }.min()?.toInt() ?: 0)
-                .setMatchedKeyCount(exposures.map { it.key }.distinct().size)
-                .setMaximumRiskScore(exposures.map { it.getRiskScore(configuration) }.max()?.toInt() ?: 0)
-                .setAttenuationDurations(intArrayOf(
-                        exposures.map { it.getAttenuationDurations(configuration)[0] }.sum(),
-                        exposures.map { it.getAttenuationDurations(configuration)[1] }.sum(),
-                        exposures.map { it.getAttenuationDurations(configuration)[2] }.sum()
-                ))
-                .setSummationRiskScore(exposures.map { it.getRiskScore(configuration) }.sum())
-                .build()
+        val response = buildExposureSummary(configuration, exposures)
 
         database.noteAppAction(packageName, "getExposureSummary", JSONObject().apply {
             put("request_token", params.token)
