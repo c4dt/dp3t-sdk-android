@@ -134,10 +134,12 @@ dependencies {
 	runtimeOnly('io.jsonwebtoken:jjwt-orgjson:0.11.2') {
 		exclude group: 'org.json', module: 'json'
 	}
-	implementation 'org.bouncycastle:bcprov-jdk15on:1.65'
 
-	implementation 'com.google.android.gms:play-services-tasks:17.0.2'
-	implementation 'com.google.android.gms:play-services-base:17.2.1'
+	def safeParcelVersion = "1.6.0"
+	implementation "org.microg:safe-parcel:$safeParcelVersion"
+
+	def fragmentVersion = "1.2.5"
+	implementation "androidx.fragment:fragment:$fragmentVersion"
 
 	testImplementation 'junit:junit:4.12'
 
@@ -145,4 +147,9 @@ dependencies {
 	androidTestImplementation 'androidx.test.ext:junit:1.1.1'
 	androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 	androidTestImplementation 'com.squareup.okhttp3:mockwebserver:3.14.7'
+
+	implementation project(':play-services-nearby')
+}
+repositories {
+	mavenCentral()
 }
