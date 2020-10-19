@@ -1,0 +1,41 @@
+--- play-services-nearby-core/src/main/kotlin/org/microg/gms/nearby/exposurenotification/DeviceInfo.kt
++++ play-services-nearby-core/src/main/kotlin/org/microg/gms/nearby/exposurenotification/DeviceInfo.kt
+@@ -12,31 +12,31 @@ import android.os.Build
+ import android.util.Log
+ import kotlin.math.roundToInt
+ 
+-data class DeviceInfo(val oem: String, val model: String, val txPowerCorrection: Byte, val rssiCorrection: Byte, val confidence: Byte = CONFIDENCE_MEDIUM)
++data class DeviceInfo(val oem: String, val device: String, val model: String, val rssiCorrection: Byte, val txPowerCorrection: Byte, val confidence: Byte = CONFIDENCE_MEDIUM)
+ 
+ private var knownDeviceInfo: DeviceInfo? = null
+ 
+-fun averageCurrentDeviceInfo(oem: String, model: String, deviceInfos: List<DeviceInfo>, confidence: Byte = CONFIDENCE_LOW): DeviceInfo =
+-        DeviceInfo(oem, model, deviceInfos.map { it.txPowerCorrection }.average().roundToInt().toByte(), deviceInfos.map { it.txPowerCorrection }.average().roundToInt().toByte(), CONFIDENCE_LOW)
++fun averageCurrentDeviceInfo(oem: String, device: String, model: String, deviceInfos: List<DeviceInfo>, confidence: Byte = CONFIDENCE_LOW): DeviceInfo =
++        DeviceInfo(oem, device, model, deviceInfos.map { it.rssiCorrection }.average().roundToInt().toByte(), deviceInfos.map { it.txPowerCorrection }.average().roundToInt().toByte(), confidence)
+ 
+ val currentDeviceInfo: DeviceInfo
+     get() {
+         var deviceInfo = knownDeviceInfo
+         if (deviceInfo == null) {
+             val byOem = allDeviceInfos.filter { it.oem.equalsIgnoreCase(Build.MANUFACTURER) }
+-            val exactMatch = byOem.find { it.model.equalsIgnoreCase(Build.MODEL) }
++            val exactMatch = byOem.find { it.device.equalsIgnoreCase(Build.DEVICE) && it.model.equalsIgnoreCase(Build.MODEL) }
+             deviceInfo = when {
+                 exactMatch != null -> {
+-                    // Exact match
++                    // Exact match, use provided confidence
+                     exactMatch
+                 }
+                 byOem.isNotEmpty() -> {
+                     // Fallback to OEM average
+-                    averageCurrentDeviceInfo(Build.MANUFACTURER, Build.MODEL, byOem)
++                    averageCurrentDeviceInfo(Build.MANUFACTURER, Build.DEVICE, Build.MODEL, byOem, CONFIDENCE_LOW)
+                 }
+                 else -> {
+                     // Fallback to all device average
+-                    averageCurrentDeviceInfo(Build.MANUFACTURER, Build.MODEL, allDeviceInfos, CONFIDENCE_LOWEST)
++                    averageCurrentDeviceInfo(Build.MANUFACTURER, Build.DEVICE, Build.MODEL, allDeviceInfos, CONFIDENCE_LOWEST)
+                 }
+             }
+             Log.d(TAG, "Selected $deviceInfo")
