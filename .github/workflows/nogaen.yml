@@ -1,0 +1,47 @@
+name: Version without GAEN dependencies
+
+on:
+    push:
+        tags:
+            - 'v*\+nogaen'
+
+jobs:
+    build:
+        name: "Build SDK libraries"
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up JDK
+              uses: actions/setup-java@v1
+              with:
+                  java-version: 1.8
+
+            - name: Build
+              run: cd dp3t-sdk; ./gradlew assembleRelease
+
+            - name: Prepare artifact
+              run: zip --junk-paths sdk-libs $( find . -name 'play-*.aar' -o -name 'sdk-production*.aar' -o -name 'play-*.jar' )
+
+            - name: Create release
+              id: create_release
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ github.ref }}
+                  release_name: Release ${{ github.ref }}
+                  draft: false
+                  prerelease: ${{ contains(github.ref, 'alpha') }}
+
+            - name: Upload release artifact
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: ./sdk-libs.zip
+                  asset_name: sdk-libs.zip
+                  asset_content_type: application/zip
