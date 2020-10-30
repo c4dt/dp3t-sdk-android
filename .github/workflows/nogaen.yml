@@ -19,11 +19,14 @@ jobs:
               with:
                   java-version: 1.8
 
-            - name: Build
+            - name: Build SDK
               run: cd dp3t-sdk; ./gradlew assembleRelease -PversionNoGaen=${{ github.ref }}
 
-            - name: Prepare artifact
+            - name: Prepare SDK artifact
               run: zip --junk-paths sdk-libs $( find . -name 'play-*.aar' -o -name 'sdk-production*.aar' -o -name 'play-*.jar' )
+
+            - name: Build Calibration App
+              run: cd calibration-app; ./gradlew assembleDebug -PversionNoGaen=${{ github.ref }}
 
             - name: Create release
               id: create_release
@@ -36,7 +39,7 @@ jobs:
                   draft: false
                   prerelease: ${{ contains(github.ref, 'alpha') }}
 
-            - name: Upload release artifact
+            - name: Upload SDK artifact
               uses: actions/upload-release-asset@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -44,4 +47,14 @@ jobs:
                   upload_url: ${{ steps.create_release.outputs.upload_url }}
                   asset_path: ./sdk-libs.zip
                   asset_name: sdk-libs.zip
+                  asset_content_type: application/zip
+
+            - name: Upload Calibration App artifact
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: ./calibration-app/app/build/outputs/apk/debug/app-debug.apk
+                  asset_name: calibration-app.apk
                   asset_content_type: application/zip
