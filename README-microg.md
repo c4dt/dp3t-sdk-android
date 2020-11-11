@@ -54,7 +54,10 @@ These are the changes that were done to the original DP3T-SDK in order to use mi
     * play-services-nearby-core-proto
 
   These are included as new modules in the DP3T-SDK Android Studio project, and
-  will each produce their separate library (`*.aar) during the build.
+  will each produce their separate library (`*.aar`) during the build.
+
+* Make some minor modifications to the microG code allowing it to handle calls
+  originating from the same process.
 
 * Modify the build files (`build.gradle`, `settings.gradle`) replacing the
   dependencies on Google Play services with dependencies on the included microG
@@ -75,9 +78,6 @@ The changes required on the Calibration app in order to use the modified SDK are
 * Declare the main activity as receiver of the `EXPOSURE_NOTIFICATION_SETTINGS`
   intent in the manifest file. This is required to satisfy the way the SDK
   checks whether GAEN is available.
-
-* Make some minor modifications to the microG code allowing it to handle calls
-  originating from the same process.
 
 And finally, the changes required on the SwissCovid app in order to use the modified SDK are:
 
@@ -109,7 +109,7 @@ steps (these are the same as the workflows for GitHub actions):
 
 * Install the latest version of the Android SDK (FIXME: or is the JDK only needed?).
 
-* Checkout the `microg-nearby` branch of the SDK fork and the SwissCovid app:
+* Checkout the `microg-nearby` branch of the SDK and SwissCovid app forks:
 ```
 $ git clone -b microg-nearby git@github.com:c4dt/dp3t-sdk-android.git
 $ git clone -b microg-nearby git@github.com:c4dt/dp3t-app-android-ch.git
