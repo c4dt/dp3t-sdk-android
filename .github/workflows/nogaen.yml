@@ -19,14 +19,22 @@ jobs:
               with:
                   java-version: 1.8
 
+            - name: Retrieve tag name
+              uses: actions/github-script@v3
+              id: get-tag
+              with:
+                  # The format for ref is `refs/tags/<tag_name>`
+                  script: return context.ref.split('/')[2]
+                  result-encoding: string
+
             - name: Build SDK
-              run: cd dp3t-sdk; ./gradlew assembleRelease -PversionNoGaen=${{ github.ref }}
+              run: cd dp3t-sdk; ./gradlew assembleRelease -PversionNoGaen=${{ steps.get-tag.outputs.result }}
 
             - name: Prepare SDK artifact
               run: zip --junk-paths sdk-libs $( find . -name 'play-*.aar' -o -name 'sdk-production*.aar' -o -name 'play-*.jar' )
 
             - name: Build Calibration App
-              run: cd calibration-app; ./gradlew assembleDebug -PversionNoGaen=${{ github.ref }}
+              run: cd calibration-app; ./gradlew assembleDebug -PversionNoGaen=${{ steps.get-tag.outputs.result }}
 
             - name: Create release
               id: create_release
