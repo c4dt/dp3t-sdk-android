@@ -24,7 +24,11 @@ include ':play-services-nearby-core-proto'
 project(':play-services-nearby-core-proto').projectDir = new File('../dp3t-sdk/play-services-nearby-core-proto')
 include ':play-services-nearby-core'
 project(':play-services-nearby-core').projectDir = new File('../dp3t-sdk/play-services-nearby-core')
+include ':play-services-nearby-core-ui'
+project(':play-services-nearby-core-ui').projectDir = new File('../dp3t-sdk/play-services-nearby-core-ui')
 include ':play-services-base-core'
 project(':play-services-base-core').projectDir = new File('../dp3t-sdk/play-services-base-core')
+include ':play-services-base-core-ui'
+project(':play-services-base-core-ui').projectDir = new File('../dp3t-sdk/play-services-base-core-ui')
 include ':play-services-nearby-api'
 project(':play-services-nearby-api').projectDir = new File('../dp3t-sdk/play-services-nearby-api')

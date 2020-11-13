@@ -46,11 +46,13 @@ These are the changes that were done to the original DP3T-SDK in order to use mi
     * play-services-base
     * play-services-base-api
     * play-services-base-core
+    * play-services-base-core-ui
     * play-services-basement
     * play-services-tasks
     * play-services-nearby
     * play-services-nearby-api
     * play-services-nearby-core
+    * play-services-nearby-core-ui
     * play-services-nearby-core-proto
 
   These are included as new modules in the DP3T-SDK Android Studio project, and
@@ -168,7 +170,7 @@ $ tail -F *logcat | awk '/^==>/ {filename=$2; next} {print filename ":" $0}' | g
 To update the relevant microG libraries:
 
 ```
-for m in play-services-{base,base-api,base-core,basement,nearby,nearby-api,nearby-core,nearby-core-proto,tasks}
+for m in play-services-{base,base-api,base-core,base-core-ui,basement,nearby,nearby-api,nearby-core,nearby-core-ui,nearby-core-proto,tasks}
 do
     echo $m
     rm -rf ./dp3t-sdk/$m
