@@ -63,7 +63,6 @@ class ExposureNotificationServiceImpl(private val context: Context, private val 
     }
 
     private suspend fun confirmPermission(permission: String): Status {
-        if (packageName == context.packageName) return Status.SUCCESS
         return ExposureDatabase.with(context) { database ->
             if (tempGrantedPermissions.contains(packageName to permission)) {
                 database.grantPermission(packageName, PackageUtils.firstSignatureDigest(context, packageName)!!, permission)
