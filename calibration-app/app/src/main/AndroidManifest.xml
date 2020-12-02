@@ -25,6 +25,8 @@
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
+				<action android:name="com.google.android.gms.settings.EXPOSURE_NOTIFICATION_SETTINGS" />
+				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
 
