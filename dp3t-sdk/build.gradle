@@ -13,6 +13,9 @@ buildscript {
 		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
         classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.12'
 	}
+
+	ext.microgVersion = '0.2.14.204215'
+	ext.microgSafeParcelVersion = '1.6.0'
 }
 
 allprojects {
