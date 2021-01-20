@@ -1,0 +1,68 @@
+name: Version without GAEN dependencies
+
+on:
+    push:
+        tags:
+            - 'nogaen-*'
+
+jobs:
+    build:
+        name: "Build SDK libraries"
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up JDK
+              uses: actions/setup-java@v1
+              with:
+                  java-version: 1.8
+
+            - name: Retrieve tag name
+              uses: actions/github-script@v3
+              id: get-tag
+              with:
+                  # The format for ref is `refs/tags/<tag_name>`
+                  script: return context.ref.split('/')[2]
+                  result-encoding: string
+
+            - name: Build SDK
+              run: cd dp3t-sdk; ./gradlew assembleRelease -PversionNoGaen=+${{ steps.get-tag.outputs.result }}
+
+            - name: Prepare SDK artifact
+              run: zip --junk-paths sdk-libs $( find . -name 'sdk-production*.aar' )
+
+            - name: Build Calibration App
+              run: cd calibration-app; ./gradlew assembleDebug -PversionNoGaen=+${{ steps.get-tag.outputs.result }}
+
+            - name: Create release
+              id: create_release
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ github.ref }}
+                  release_name: Release ${{ github.ref }}
+                  draft: false
+                  prerelease: ${{ contains(github.ref, 'alpha') }}
+
+            - name: Upload SDK artifact
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: ./sdk-libs.zip
+                  asset_name: sdk-libs.zip
+                  asset_content_type: application/zip
+
+            - name: Upload Calibration App artifact
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: ./calibration-app/app/build/outputs/apk/debug/app-debug.apk
+                  asset_name: calibration-app.apk
+                  asset_content_type: application/zip
