@@ -20,7 +20,7 @@ buildscript {
         classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.12'
 	}
 
-	ext.microgVersion = '0.2.18.204714'
+	ext.microgVersion = '0.2.19.211515'
 	ext.microgSafeParcelVersion = '1.7.0'
 }
 

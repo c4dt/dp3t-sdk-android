@@ -13,7 +13,7 @@
 buildscript {
     ext {
         kotlinVersion = '1.4.31'
-        microgVersion = '0.2.18.204714'
+        microgVersion = '0.2.19.211515'
         microgSafeParcelVersion = '1.7.0'
     }
 
